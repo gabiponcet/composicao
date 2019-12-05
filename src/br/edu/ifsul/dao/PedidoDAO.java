@@ -167,12 +167,12 @@ public class PedidoDAO extends BaseDAO {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, pedido.getFormaPagamento());
             stmt.setString(2, pedido.getEstado());
-            stmt.setDate(5, pedido.getDataCriacao());
-            stmt.setDate(6,pedido.getDataModificacao());
-            stmt.setBoolean(7,pedido.getSituacao());
-            stmt.setLong(8,pedido.getCliente().getId());
-            stmt.setDouble(9, pedido.getTotalPedido());
-            stmt.setInt(10, pedido.getNotaFiscal());
+            stmt.setDate(3, pedido.getDataCriacao());
+            stmt.setDate(4,pedido.getDataModificacao());
+            stmt.setBoolean(5,pedido.getSituacao());
+            stmt.setLong(6,pedido.getCliente().getId());
+            stmt.setDouble(7, pedido.getTotalPedido());
+            stmt.setInt(8, pedido.getNotaFiscal());
             int count = stmt.executeUpdate();
             stmt.close();
             conn.close();
@@ -183,12 +183,14 @@ public class PedidoDAO extends BaseDAO {
         }
     }
 
-    public boolean updateEstado (Pedido pedido, String estado){
+    public boolean checkout (Pedido pedido){
         try {
             Connection conn = getConnection();
-            String sql = "UPDATE pedidos SET estado=? WHERE id=?";
+            String sql = "UPDATE pedidos SET estado=?, notaFiscal=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(2, pedido.getEstado());
+            stmt.setString(1, "faturado");
+            stmt.setInt(2, pedido.getId());
+            stmt.setInt(3, pedido.getId());
             int count = stmt.executeUpdate();
             stmt.close();
             conn.close();
@@ -225,8 +227,9 @@ public class PedidoDAO extends BaseDAO {
     private Pedido resultsetToPedido(ResultSet rs) throws SQLException {
        Pedido p = new Pedido();
        ClienteDAO cliente = new ClienteDAO();
+       ItemDAO item = new ItemDAO();
         p.setId(rs.getInt("id"));
-        p.setFormaPagamento(rs.getString("nome"));
+        p.setFormaPagamento(rs.getString("pagamento"));
         p.setEstado(rs.getString("estado"));
         p.setDataCriacao(rs.getDate("data_criacao"));
         p.setDataModificacao(rs.getDate("data_modificacao"));
@@ -234,6 +237,7 @@ public class PedidoDAO extends BaseDAO {
         p.setCliente(cliente.getClienteById(rs.getLong("id_cliente")));
         p.setTotalPedido(rs.getDouble("total_pedido"));
         p.setNotaFiscal(rs.getInt("notaFiscal"));
+        p.setItens(item.getItensByPedido(p));
         return p;
     }
 

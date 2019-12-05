@@ -147,14 +147,15 @@ public class ProdutoDAO extends BaseDAO {
     public boolean update(Produto produto){
         try {
             Connection conn = getConnection();
-            String sql = "UPDATE produtos SET nome=?, descricao=?, valor=?, estoque= ?,situacao= ?, codigo=? WHERE id=?";
+            String sql = "UPDATE produtos SET nome=?, descricao=?, valor=?, quantidade= ?,situacao= ?, codigo=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, produto.getNome());
             stmt.setString(2, produto.getDescricao());
             stmt.setDouble(3,produto.getValor());
             stmt.setInt(4,produto.getQuantidade());
             stmt.setBoolean(5,produto.getSituacao());
-            stmt.setLong(6,produto.getCodigo());
+            stmt.setInt(6,produto.getCodigo());
+            stmt.setLong(7,produto.getId());
             int count = stmt.executeUpdate();
             stmt.close();
             conn.close();

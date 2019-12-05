@@ -7,13 +7,13 @@ public class Produto {
     private Double valor;
     private Integer quantidade;
     private Boolean situacao;
-    private Long codigo;
+    private int codigo;
 
     public Produto() {
 
     }
 
-    public Produto(Long id, String nome, String descricao, Double valor, Integer estoque, Integer quantidade, Boolean situacao, Long codigo) {
+    public Produto(Long id, String nome, String descricao, Double valor, Integer estoque, Integer quantidade, Boolean situacao, int codigo) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
@@ -71,11 +71,11 @@ public class Produto {
         this.situacao = situacao;
     }
 
-    public Long getCodigo() {
+    public int getCodigo() {
         return codigo;
     }
 
-    public void setCodigo(Long codigo) {
+    public void setCodigo(int codigo) {
         this.codigo = codigo;
     }
 

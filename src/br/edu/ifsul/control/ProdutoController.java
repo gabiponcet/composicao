@@ -81,7 +81,7 @@ public class ProdutoController {
         System.out.println("Situação:");
         produto.setSituacao(true);
         System.out.println("Código:");
-        produto.setCodigo(s.nextLong());
+        produto.setCodigo(s.nextInt());
         if(produtoDAO.insert(produto)){
             System.out.println("Produto Salvo");
         }else{

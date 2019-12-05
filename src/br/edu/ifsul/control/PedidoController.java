@@ -37,7 +37,7 @@ public class PedidoController {
                     break;
                 case 2:
                     System.out.println("Enviar pedido " + opcao);
-                    telaPedido.insert();
+
                     break;
                 case 3:
                     System.out.println("Excluir pedido" + opcao);
@@ -73,9 +73,14 @@ public class PedidoController {
             System.out.println(pedido);
             System.out.println("Confirmar a operação? (0-sim/1-não)");
             if(s.nextInt() == 0){
-                if(pedidoDAO.updateEstado(pedido,"faturado")) System.out.println(pedidoDAO.getPedidoById(codigo));
-                //gerar a nota fiscal
-
+                if(pedidoDAO.checkout(pedido)) {
+                    pedido = pedidoDAO.getPedidoById(codigo);
+                    System.out.println("Check-out realizado.");
+                    //emite a nota fiscal
+                    System.out.println(pedido);
+                }else{
+                    System.out.println("Erro ao fazer check-out");
+                }
             }else{
                 System.out.println("Operação cancelada.");
             }
@@ -84,31 +89,6 @@ public class PedidoController {
         }
     }
 
-    //case 2. Enviar pedido
-    private void insert(){
-        Pedido pedido = new Pedido();
-        System.out.println("Digite os dados do pedido:\nPagamento:");
-        pedido.setFormaPagamento(s.next());
-        System.out.println("Estado:");
-        pedido.setEstado(s.next());
-        System.out.println("Data Criação:");
-        pedido.setDataCriacao( new Date(new java.util.Date().getTime()));
-        System.out.println("Data Modificação:");
-        pedido.setDataModificacao( new Date(new java.util.Date().getTime()));
-        System.out.println("Situação:");
-        pedido.setSituacao(true);
-        System.out.println("Cliente:");
-        //pedido.setCliente();
-        System.out.println("Total pedido:");
-        pedido.setTotalPedido(s.nextDouble());
-        System.out.println("Nota Fiscal:");
-        pedido.setNotaFiscal(s.nextInt());
-        if(pedidoDAO.insert(pedido)){
-            System.out.println("Pedido Salvo");
-        }else{
-            System.out.println("Erro ao tentar salvar o pedido. Por favor, contate o adminstrador.");
-        }
-    }
 
     //case 8
     private void listarPedido() {

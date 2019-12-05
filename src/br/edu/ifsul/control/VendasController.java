@@ -57,10 +57,22 @@ public class VendasController {
                             item.setSituacao(true);
                             item.setTotalItem(quantidade * produto.getValor());
                             itens.add(item);
-                            System.out.println("Produto adionado ao carrinho.");
-                            baixarEstoque(item); //baixa o estoque ao adicionar no carrinho
-                            System.out.print("\nDeseja vender outro produto (sim-1/não-2)? ");
+                            System.out.println("Produto adicionado ao carrinho.");
+                            baixarQuantidade(item); //baixa o estoque ao adicionar no carrinho
+                            System.out.print("\nDeseja vender outro produto (sim-1/não-2/cancelar item-3)? ");
                             sair = s.nextInt();
+
+                            while(sair == 3 && !itens.isEmpty()){
+                                exibirCarrinho(itens);
+                                System.out.println("\nQual item você deseja excluir?");
+                                int indice = s.nextInt();
+                                voltarEstoque(itens.get(indice));
+                                itens.remove(indice);
+                                exibirCarrinho(itens);
+                                System.out.println("\\nDeseja vender outro produto (sim-1/não-0/cancelar item-3)?");
+                                sair = s.nextInt();
+                            }
+
                         }
                     }
                 }while(sair != 2);
@@ -90,7 +102,7 @@ public class VendasController {
                         totalPedido += i.getQuantidade()*i.getProduto().getValor();
                     });
                     System.out.println("*************************************\n" + "TOTAL DO PEDIDO = " + NumberFormat.getCurrencyInstance().format(totalPedido));
-                    System.out.print("Fechar o pedido?(1-sim/2-não) ");
+                    System.out.print("Fechar o pedido?(1-sim/2-não/3-excluir item ");
                     opcao = s.nextInt();
                     if(opcao == 1){
                         //salva o pedido
@@ -99,6 +111,7 @@ public class VendasController {
                         pedido.setEstado("aberto");
                         pedido.setCliente(cliente);
                         pedido.setTotalPedido(totalPedido);
+                        pedido.setNotaFiscal(0);
                         if(new PedidoDAO().insert(pedido)){
                             System.out.println("Pedido salvo.");
                         }else{
@@ -122,7 +135,38 @@ public class VendasController {
 
     }
 
-    private static void baixarEstoque(Item item){
+    private static void exibirCarrinho(List<Item> itens){
+        System.out.println("\n ******** Seu carrinho **********");
+        totalPedido = 0;
+        int count = 0;
+        for(int i =0; i < itens.size(); i++){
+            String nome = itens.get(i).getProduto().getNome();
+            String precoUnitario = NumberFormat.getCurrencyInstance().format(itens.get(i).getProduto().getValor());
+            int MAX = 25;
+            if (nome.length() <= MAX){
+                for (int j = nome.length(); j < MAX; j++) {
+                    nome += " ";
+                }
+            }
+            if(precoUnitario.length() <= MAX){
+                for (int j = precoUnitario.length(); j < MAX-5; j++) {
+                    precoUnitario += " ";
+                }
+            }
+            System.out.println(
+                    "item: " + i +
+                            "\tProduto: " + nome +
+                            "\tValor unidade = " +  precoUnitario +
+                            "\t\tQuantidade = " + itens.get(i).getQuantidade() +
+                            "\t\tTotalItem = " + (NumberFormat.getCurrencyInstance().format(itens.get(i).getQuantidade()*itens.get(i).getProduto().getValor()))
+            );
+            totalPedido += itens.get(i).getQuantidade()*itens.get(i).getProduto().getValor();
+        }
+        System.out.println("*************************************\n" + "TOTAL DO PEDIDO = " + NumberFormat.getCurrencyInstance().format(totalPedido));
+    }
+
+
+    private static void baixarQuantidade(Item item){
         Produto produto = item.getProduto();
         produto.setQuantidade(produto.getQuantidade() - item.getQuantidade());
         produtoDAO.update(produto);
