@@ -14,13 +14,13 @@ public class ProdutoDAO extends BaseDAO {
     public boolean insert(Produto produto){
         try {
             Connection conn = getConnection();
-            String sql = "INSERT INTO produtos (nome, sobrenome, situacao, codigo) VALUES (?, ?, ?,?)";
+            String sql = "INSERT INTO produtos (nome, valor, descricao, situacao, quantidade, codigo) VALUES (?, ?, ?,?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, produto.getNome());
-            stmt.setString(2, produto.getDescricao());
-            stmt.setDouble(3,produto.getValor());
-            stmt.setInt(4,produto.getQuantidade());
-            stmt.setBoolean(5, produto.getSituacao());
+            stmt.setDouble(2,produto.getValor());
+            stmt.setString(3, produto.getDescricao());
+            stmt.setBoolean(4, produto.getSituacao());
+            stmt.setInt(5, produto.getQuantidade());
             stmt.setLong(6, produto.getCodigo());
             int count = stmt.executeUpdate();
             stmt.close();

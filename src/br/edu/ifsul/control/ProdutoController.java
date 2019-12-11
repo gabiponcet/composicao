@@ -72,14 +72,13 @@ public class ProdutoController {
         Produto produto = new Produto();
         System.out.println("Digite os dados do produto:\nNome:");
         produto.setNome(s.next());
-        System.out.println("decricao:");
-        produto.setDescricao(s.next());
         System.out.println("Valor:");
         produto.setValor(s.nextDouble());
-        System.out.println("Estoque:");
-        produto.setQuantidade(s.nextInt());
-        System.out.println("Situação:");
+        System.out.println("decricao:");
+        produto.setDescricao(s.next());
         produto.setSituacao(true);
+        System.out.println("Quantidade:");
+        produto.setQuantidade(s.nextInt());
         System.out.println("Código:");
         produto.setCodigo(s.nextInt());
         if(produtoDAO.insert(produto)){

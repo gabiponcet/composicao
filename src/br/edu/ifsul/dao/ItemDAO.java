@@ -12,6 +12,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemDAO extends BaseDAO {
+
+    public Item getItemById(int id){
+        try {
+           Item item = null;
+            Connection conn = getConnection();
+            String sql = "SELECT * FROM itens WHERE id=?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next()){
+                item = resultsetToItens(rs);
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+            return item;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
     public List<Item> getItensByPedido(Pedido p){
         List<Item> itens = new ArrayList<>();
         try {
@@ -34,13 +57,13 @@ public class ItemDAO extends BaseDAO {
     }
 
     //softDelete de item de um pedido
-    public boolean softDelete(int id, boolean situacao){
+    public boolean softDeleteItemPedido(int id, boolean situacao){
         try {
             Connection conn = getConnection();
             String sql = "UPDATE itens SET situacao=? WHERE id=?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setLong(1, id);
-            stmt.setBoolean(2, situacao);
+            stmt.setBoolean(1, situacao);
+            stmt.setInt(2, id);
             int count = stmt.executeUpdate();
             stmt.close();
             conn.close();
@@ -67,6 +90,6 @@ public class ItemDAO extends BaseDAO {
     }
     public static void main(String[] args) {
         ItemDAO itemDAO= new ItemDAO();
-        System.out.println(itemDAO.softDelete((int) 3L, false));
+        System.out.println(itemDAO.softDeleteItemPedido((int) 3L, false));
     }
 }

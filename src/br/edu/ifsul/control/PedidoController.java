@@ -2,9 +2,11 @@ package br.edu.ifsul.control;
 
 import br.edu.ifsul.dao.ItemDAO;
 import br.edu.ifsul.dao.PedidoDAO;
+import br.edu.ifsul.model.Item;
 import br.edu.ifsul.model.Pedido;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class PedidoController {
@@ -26,6 +28,7 @@ public class PedidoController {
                             "\n6. Lista todos os pedidos por período" +
                             "\n7. Listar todos os pedidos por cliente" +
                             "\n8. Listar pedido"+
+                            "\n9. Retirar item do pedido"+
                             "\nDigite a opção (0 para sair): "
             );
             Scanner s = new Scanner(System.in);
@@ -55,8 +58,11 @@ public class PedidoController {
                     System.out.println("Listar todos os pedidos por cliente " + opcao);
                     break;
                 case 8:
-                    System.out.println("Listar itens do pedido" + opcao);
+                    System.out.println("Listar itens do pedido" );
                     telaPedido.listarPedido();
+                case 9:
+                    System.out.println("Retirar item do pedido");
+                    telaPedido.softDeleteItem();
                     break;
                 default:
                     if(opcao != 0) System.out.println("Opção inválida.");
@@ -98,6 +104,47 @@ public class PedidoController {
             System.out.print(pedido);
         }else{
             System.out.println("Código não localizado.");
+        }
+    }
+
+    //case 9 ----- O Matheus me ajudou nesse, pois estava com dificuldade!
+    private void softDeleteItem() {
+        PedidoDAO produtoDAO = new PedidoDAO();
+        ItemDAO itemDAO = new ItemDAO();
+        Pedido pedido = new Pedido();
+        int idPedido = 0;
+        int idItem = 0;
+        int flag = 0;
+        do {
+            System.out.println("Digite o id do pedido: ");
+            idPedido = s.nextInt();
+            pedido = pedidoDAO.getPedidoById(idPedido);
+            if (pedido.getId() == 0){
+                System.out.println("Codigo invalido");
+                idPedido = 0;
+            }else{
+                System.out.println(pedido);
+            }
+        }while (idPedido == 0);
+        do {
+            System.out.println("Digite o id do item");
+            idItem = s.nextInt();
+            for (Item i : pedido.getItens()){
+                if (i.getId() == idItem){
+                    flag = 2;
+                }
+            }
+            if (flag == 0){
+                System.out.println("Id do item nao encontrado\nQuer continuar [0-sim/1-nao]");
+                flag = s.nextInt();
+            }
+        }while (flag == 0);
+        if (flag == 2) {
+            if(itemDAO.softDeleteItemPedido(idItem, false) == false){
+                System.out.println("Nao foi possivel excluir o item");
+            }else {
+                System.out.println("Item exlcuido");
+            }
         }
     }
 
